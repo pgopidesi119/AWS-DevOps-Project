@@ -1,0 +1,160 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - https://raw.githubusercontent.com/open-telemetry/opentelemetry-demo/91356a39d5a0dc601317b55339b7abfafd91b481/kubernetes/opentelemetry-demo.yaml
+patches:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: accounting
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-accounting" # ci-image:accounting
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: ad
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-ad" # ci-image:ad
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: cart
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-cart" # ci-image:cart
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: checkout
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-checkout" # ci-image:checkout
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: currency
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-currency" # ci-image:currency
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: email
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-email" # ci-image:email
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: flagd
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/1/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-flagd-ui" # ci-image:flagd-ui
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: fraud-detection
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-fraud-detection" # ci-image:fraud-detection
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: frontend
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-frontend" # ci-image:frontend
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: frontend-proxy
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-frontend-proxy" # ci-image:frontend-proxy
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: image-provider
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-image-provider" # ci-image:image-provider
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: load-generator
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-load-generator" # ci-image:load-generator
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: payment
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-payment" # ci-image:payment
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: product-catalog
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-product-catalog" # ci-image:product-catalog
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: quote
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-quote" # ci-image:quote
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: recommendation
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-recommendation" # ci-image:recommendation
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: shipping
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: "ghcr.io/open-telemetry/demo:2.0.2-shipping" # ci-image:shipping

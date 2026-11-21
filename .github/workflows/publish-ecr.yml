@@ -1,0 +1,74 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+name: Build and push images to ECR
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - argocd/overlays/demo/kustomization.yaml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: publish-ecr-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      AWS_REGION: ${{ vars.AWS_REGION || 'us-west-2' }}
+      ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY || 'opentelemetry-demo' }}
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Go for Product Catalog
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: src/product-catalog/go.mod
+          cache-dependency-path: src/product-catalog/go.sum
+
+      - name: Build Product Catalog
+        working-directory: src/product-catalog
+        run: go build ./...
+
+      - name: Test Product Catalog
+        working-directory: src/product-catalog
+        run: go test ./...
+
+      - name: Validate GitOps image updater
+        run: |
+          sh -n scripts/publish-images-to-ecr.sh scripts/update-argocd-image-tags.sh
+          python3 -m unittest discover -s test -p 'test_update_argocd_image_tags.py'
+
+      - name: Configure AWS credentials with OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Create ECR repository and log in
+        run: bash scripts/publish-images-to-ecr.sh login
+
+      - name: Build Docker images
+        run: bash scripts/publish-images-to-ecr.sh build
+
+      - name: Push Docker images to ECR
+        run: bash scripts/publish-images-to-ecr.sh push
+
+      - name: Update ArgoCD image tags
+        run: bash scripts/update-argocd-image-tags.sh
+
+      - name: Push GitOps tag update
+        run: git push origin HEAD:main
+
