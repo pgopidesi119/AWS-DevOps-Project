@@ -20,5 +20,6 @@ src/*/*/Dockerfile
 ###################################
 # shipping
 ./src/shipping/target
+src/ad/target
 ###################################
 

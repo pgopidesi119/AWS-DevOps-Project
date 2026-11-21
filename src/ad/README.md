@@ -5,35 +5,21 @@ are provided then it returns random ads.
 
 ## Building Locally
 
-The Ad service requires at least JDK 17 to build and uses gradlew to
-compile/install/distribute. Gradle wrapper is already part of the source code.
-To build Ad Service, run:
+The Ad service requires JDK 21 and Maven. From the repository root, build it with:
 
 ```sh
-./gradlew installDist
-
-<or>
-
-./gradlew installDist -PprotoSourceDir=./proto
+mvn -f src/ad/pom.xml clean package
 ```
 
-It will create an executable script
-`src/ad/build/install/oteldemo/bin/Ad`.
+The generated gRPC classes and an executable, dependency-inclusive JAR are
+created under `src/ad/target/`.
 
 To run the Ad Service:
 
 ```sh
 export AD_PORT=8080
 export FEATURE_FLAG_GRPC_SERVICE_ADDR=featureflagservice:50053
-./build/install/opentelemetry-demo-ad/bin/Ad
-```
-
-### Upgrading Gradle
-
-If you need to upgrade the version of gradle then run
-
-```sh
-./gradlew wrapper --gradle-version <new-version>
+java -jar src/ad/target/ad-service.jar
 ```
 
 ## Building Docker
