@@ -127,4 +127,3 @@ Read [`terraform/README.md`](terraform/README.md) for prerequisites, deployment 
 ## Project references
 
 - [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo)
-- [Ultimate DevOps Project - AWS](https://github.com/iam-veeramalla/ultimate-devops-project-aws) (source of the adapted EKS/VPC Terraform configuration)

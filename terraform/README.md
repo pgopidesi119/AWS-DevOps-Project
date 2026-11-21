@@ -1,6 +1,6 @@
 # AWS EKS infrastructure
 
-This Terraform configuration creates an AWS VPC spanning three availability zones and an Amazon EKS cluster with a managed node group. It is adapted from the `eks-install` directory in [iam-veeramalla/ultimate-devops-project-aws](https://github.com/iam-veeramalla/ultimate-devops-project-aws). The source repository and this project's root license use Apache-2.0.
+This Terraform configuration creates an AWS VPC spanning three availability zones and an Amazon EKS cluster with a managed node group. The EKS/VPC Terraform configuration is adapted from the Ultimate DevOps Project - AWS. The source project and this project's root license use Apache-2.0.
 
 The configuration creates public and private subnets, an internet gateway, one NAT gateway per public subnet, route tables, EKS IAM roles, the EKS control plane, and managed worker nodes. It only provisions infrastructure; it does not deploy this repository's application into the cluster.
 
