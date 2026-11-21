@@ -6,16 +6,88 @@ The application models an online store: shoppers browse products, manage a cart,
 
 ## Architecture
 
-![OpenTelemetry Demo microservices architecture](docs/architecture.png)
+```mermaid
+flowchart LR
+    subgraph clients["Traffic sources"]
+        direction TB
+        internet["Internet / browser"]
+        loadgen["Load generator"]
+        mobile["React Native app"]
+    end
 
-The diagram shows the main application request and dependency flow:
+    proxy["Frontend proxy<br/>(Envoy)"]
 
-- Browser, load-generator, and mobile-app traffic enters through the Envoy frontend proxy and is routed to the web frontend.
-- The frontend calls backend services such as the ad, cart, checkout, currency, product-catalog, recommendation, and shipping services.
-- Checkout coordinates cart, product, payment, shipping, currency, and email operations.
-- The cart stores its data in Valkey. Kafka carries asynchronous events consumed by services such as accounting and fraud detection.
-- Feature flags are provided by `flagd`; the Flagd UI and image provider support the storefront.
-- The Compose stack also includes OpenTelemetry collection and observability components, including Jaeger, Prometheus, Grafana, and OpenSearch.
+    subgraph storefront["Storefront"]
+        direction TB
+        frontend["Web frontend"]
+        flagui["Flagd UI"]
+        images["Image provider<br/>(nginx)"]
+    end
+
+    subgraph apis["Shopping services"]
+        direction TB
+        checkout["Checkout"]
+        cart["Cart"]
+        product["Product catalog"]
+        currency["Currency"]
+        shipping["Shipping"]
+        payment["Payment"]
+        email["Email"]
+        ad["Ad"]
+        recommendation["Recommendation"]
+        quote["Quote"]
+    end
+
+    subgraph platform["Shared dependencies"]
+        direction TB
+        flags["Feature flags<br/>(flagd)"]
+        valkey["Cart cache<br/>(Valkey)"]
+        kafka["Event queue<br/>(Kafka)"]
+        accounting["Accounting"]
+        fraud["Fraud detection"]
+    end
+
+    internet -->|HTTP| proxy
+    loadgen -->|HTTP| proxy
+    mobile -->|HTTP| proxy
+
+    proxy -->|HTTP| frontend
+    proxy -->|HTTP| flagui
+    proxy -->|HTTP| images
+
+    frontend --> checkout
+    frontend --> cart
+    frontend --> product
+    frontend --> currency
+    frontend --> ad
+    frontend --> recommendation
+
+    checkout --> cart
+    checkout --> product
+    checkout --> currency
+    checkout --> shipping
+    checkout --> payment
+    checkout --> email
+    shipping --> quote
+
+    cart --> valkey
+    frontend --> flags
+    checkout -->|events| kafka
+    kafka --> accounting
+    kafka --> fraud
+
+    classDef entry fill:#e8f1fb,stroke:#2463a6,color:#17324d
+    classDef edge fill:#fff0d9,stroke:#bd6b00,color:#4d2b00
+    classDef service fill:#e8f6ec,stroke:#32804a,color:#183d24
+    classDef shared fill:#f1eafb,stroke:#7044a1,color:#35204d
+
+    class internet,loadgen,mobile,proxy entry
+    class frontend,flagui,images edge
+    class checkout,cart,product,currency,shipping,payment,email,ad,recommendation,quote service
+    class flags,valkey,kafka,accounting,fraud shared
+```
+
+Arrows show request or event flow; the HTTP labels identify traffic into the frontend proxy. The Compose stack also includes OpenTelemetry collection and observability components, including Jaeger, Prometheus, Grafana, and OpenSearch.
 
 ## Run locally
 
@@ -51,7 +123,6 @@ Read [`terraform/README.md`](terraform/README.md) for prerequisites, deployment 
 | `docker-compose.minimal.yml` | Reduced local demo stack |
 | `test/` | Integration and trace-testing assets |
 | `terraform/` | AWS VPC and EKS infrastructure |
-| `docs/architecture.png` | Project architecture diagram |
 
 ## Project references
 
